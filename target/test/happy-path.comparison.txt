@@ -1,3 +1,0 @@
-Comparando archivos D:\USERS\I¥AKI\CODE\CMD\SPLIT-PATH\SRC\TEST\happy-path.exp.output.txt y D:\USERS\I¥AKI\CODE\CMD\SPLIT-PATH\TARGET\TEST\HAPPY-PATH.OUTPUT.TXT
-FC: no se han encontrado diferencias
-
