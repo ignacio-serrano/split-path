@@ -12,8 +12,12 @@
 SETLOCAL EnableDelayedExpansion
 :::::::::::::::::::::::::::::::::: PREPROCESS ::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::: PROCESS :::::::::::::::::::::::::::::::::::
+:: Replaces percentages with "URL encoded" percentages. It seems that the only
+:: way to reference percentages in string substitution requires delayed 
+:: expansion. All other attempts failed.
+SET aux=!PATH:%%=?25!
 :: Replaces spaces with "URL encoded" spaces.
-SET aux=%PATH: =?20%
+SET aux=%aux: =?20%
 :: Replaces semicolons with spaces.
 SET aux=%aux:;= %
 
@@ -48,6 +52,7 @@ SET element=%1
 SET displayElement=%element:?20= %
 SET displayElement=%displayElement:?28=(%
 SET displayElement=%displayElement:?29=)%
+SET displayElement=!displayElement:?25=%%!
 
 ECHO %displayElement%
 

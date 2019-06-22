@@ -10,7 +10,6 @@ TODO:
     no guarantee «split-path» is gonna work.
   * Add a --version option (just in case).
   * Add a --help option with the code above.
-  * Add support for PATHs containing the % character.
 
 Project layout
 --------------
