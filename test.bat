@@ -1,4 +1,14 @@
 :: encoding="Cp850"
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: PROGRAM ®test¯
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::    Builds and runs automatic tests in the project directory.
+::
+:: USAGE:
+::    test
+::
+:: DEPENDENCIES: :findOutInstall :runTest
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 @ECHO OFF
 SETLOCAL EnableDelayedExpansion
 :::::::::::::::::::::::::::::::::: PREPROCESS ::::::::::::::::::::::::::::::::::
@@ -16,8 +26,8 @@ IF NOT EXIST "%rootDir%\target\test" (
 )
 
 
-FOR /F %%i IN ('dir /B "%rootDir%\src\test\*.bat"') DO (
-    CALL "%rootDir%\src\test\%%i"
+FOR /F %%i IN ('DIR /B /A:D "%rootDir%\src\test"') DO (
+    CALL :runTest %%i
     SET testErrLvl=!ERRORLEVEL!
     IF !testErrLvl! GTR 0 (
         SET errLvl=!testErrLvl!
@@ -32,6 +42,57 @@ FOR /F %%i IN ('dir /B "%rootDir%\src\test\*.bat"') DO (
 EXIT /B %errLvl% & ENDLOCAL
 
 :::::::::::::::::::::::::::::::::: SUBROUTINES :::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: BEGINNING: SUBROUTINE ®runTest¯
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::    Runs a test located under src\test. First calls the prepare-test.bat to
+:: set the PATH variable with the test path. Then runs split-path. Then compares
+:: the output with the content of the expected-output.txt file.
+:: 
+:: USAGE: 
+::    CALL :runTest ®testDir¯
+:: WHERE...
+::    ®testDir¯: Name of a directory under src\test.
+::
+:: DEPENDENCIES: NONE
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:runTest
+SETLOCAL EnableDelayedExpansion
+
+::TODO: It wouldn't harm to check that the directory actually contains a 
+:: prepare-test.bat and expected-output.txt files.
+
+::TODO: It would be better to completely avoid setting variables within this 
+:: subroutine. They may conflict with the environment changes made by 
+:: prepare-test.bat and with other variables used by the program being tested.
+
+:: The directory name is used to compose the names of temporary files in the 
+:: target directory.
+SET testName=%~1
+
+:: Sets the PATH for this test.
+CALL "%rootDir%\src\test\%testName%\prepare-test.bat"
+
+:: Runs split-path, capturing its output in a file.
+>"%rootDir%\target\test\%testName%.output.txt" CALL "%rootDir%\src\main\split-path.bat"
+
+:: Compares the contents of that file with those of expected-output.txt. If 
+:: the contents are identical, FC will set an ERRORLEVEL. The output of FC is 
+:: written to a file so in case the test fails, give some more information as 
+:: of why.
+>"%rootDir%\target\test\%testName%.comparison.txt" FC "%rootDir%\src\test\%testName%\expected-output.txt" "%rootDir%\target\test\%testName%.output.txt"
+SET errLvl=%ERRORLEVEL%
+IF %errLvl% GTR 0 (
+    TYPE "%rootDir%\target\test\%testName%.comparison.txt"
+)
+
+:: Returns FCs ERRORLEVEL to signal the calling code that the test ended in 
+:: failure.
+EXIT /B %errLvl% & ENDLOCAL
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: END: SUBROUTINE ®runTest¯
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: BEGINNING: SUBROUTINE ®findOutInstall¯
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
