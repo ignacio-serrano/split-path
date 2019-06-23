@@ -77,9 +77,9 @@ CALL "%rootDir%\src\test\%testName%\prepare-test.bat"
 >"%rootDir%\target\test\%testName%.output.txt" CALL "%rootDir%\src\main\split-path.bat"
 
 :: Compares the contents of that file with those of expected-output.txt. If 
-:: the contents are identical, FC will set an ERRORLEVEL. The output of FC is 
-:: written to a file so in case the test fails, give some more information as 
-:: of why.
+:: the contents aren't identical, FC will set an ERRORLEVEL. The output of FC 
+:: is written to a file so in case the test fails, give some more information 
+:: as of why.
 >"%rootDir%\target\test\%testName%.comparison.txt" FC "%rootDir%\src\test\%testName%\expected-output.txt" "%rootDir%\target\test\%testName%.output.txt"
 SET errLvl=%ERRORLEVEL%
 IF %errLvl% GTR 0 (
