@@ -22,12 +22,12 @@ Project layout
 Automatic testing
 -----------------
 Adding automatic tests to split-path is quite simple. Simply add a directory 
-to src\main. Within that directory, add file named `prepare-test.bat` with a 
-single command: `SET PATH=` and then the path you want to test split-path 
-against. Add a second file `expected-output.txt`, containing what you would 
-expect to see on screen after running split-path. And that's it. Run the 
-`test.bat` script at the root directory to run it. The directory name will be 
-used as identifier of the test.
+to src\main\test. Within that directory, add a file named `prepare-test.bat` 
+with a single command: `SET PATH=` and then the path you want to test 
+split-path against. Add a second file `expected-output.txt`, containing what 
+you would expect to see on screen after running split-path. And that's it. Run 
+the `test.bat` script at the root directory to run it. The directory name will 
+be used as identifier of the test.
 
 ---
 Below, a markdown cheatsheet.
